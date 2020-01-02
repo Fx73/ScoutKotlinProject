@@ -19,8 +19,115 @@
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
     </com.google.android.material.appbar.AppBarLayout>
+    <include
+        android:id="@+id/include"
+        layout="@layout/content_main" />
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/teambackground"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginLeft="6dp"
+        android:layout_marginRight="6dp"
+        android:layout_marginTop="58dp"
+        />
 
-    <include layout="@layout/content_main" />
+    <TextView
+        android:id="@+id/TextViewTeam"
+        android:layout_width="wrap_content"
+        android:layout_height="45dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="62dp"
+        android:text="Team Name!"
+        android:textSize="32dp"
+        android:fontFamily="casual"
+        android:textColor="@color/colorAccent"
+  />
+
+
+
+    <LinearLayout
+        android:id="@+id/mapLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="60dp"
+        android:orientation="vertical"
+        android:visibility="invisible">
+
+        <ImageView
+            android:id="@+id/imageViewMap"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/action_settings" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/nameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="60dp"
+        android:orientation="vertical"
+        android:visibility="invisible">
+
+        <TextView
+            android:id="@+id/textViewName"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="80dp"
+            android:text="Entrez votre nom d'équipe ici : "
+            android:textSize="30dp"
+            android:contentDescription="@string/action_settings" />
+        <EditText
+            android:id="@+id/editTextName"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="10dp"
+            android:text=""
+            android:textSize="20dp"
+            android:contentDescription="@string/action_settings" />
+        <Button
+            android:id="@+id/buttonName"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="40dp"
+            android:text="OK"
+            android:textSize="30dp"
+            android:contentDescription="@string/action_settings" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/codeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="60dp"
+        android:orientation="vertical"
+        android:visibility="invisible">
+
+        <TextView
+            android:id="@+id/textViewCode"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="80dp"
+            android:text="Entrez votre code : "
+            android:textSize="30dp"
+            android:contentDescription="@string/action_settings" />
+        <EditText
+            android:id="@+id/editTextCode"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="10dp"
+            android:text=""
+            android:textSize="20dp"
+            android:contentDescription="@string/action_settings" />
+        <Button
+            android:id="@+id/buttonCode"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="40dp"
+            android:text="OK"
+            android:textSize="30dp"
+            android:contentDescription="@string/action_settings" />
+    </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
@@ -28,6 +135,14 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@android:drawable/ic_media_play" />
+        app:srcCompat="@android:drawable/ic_menu_camera" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_margin="@dimen/fab_margin"
+        app:srcCompat="@android:drawable/ic_dialog_map" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

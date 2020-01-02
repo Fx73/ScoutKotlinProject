@@ -4,18 +4,15 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.ViewGroup
+import android.view.View
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.*
-import android.widget.RelativeLayout.CENTER_IN_PARENT
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.marginTop
-import androidx.core.view.setMargins
 import com.example.scoutkotlinproject.Scenarios.Scenario1
 import com.google.zxing.integration.android.IntentIntegrator
 import kotlinx.android.synthetic.main.activity_main.*
@@ -23,10 +20,14 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var user : User
     lateinit var maintv: TextView
-    lateinit var layout :RelativeLayout
+    lateinit var layout : RelativeLayout
+    lateinit var mlayout : LinearLayout
+    lateinit var nlayout : LinearLayout
+    lateinit var clayout : LinearLayout
     lateinit var scenario : Scenario
+    lateinit var mappic : ImageView
+    lateinit var user : User
 
 
 
@@ -35,20 +36,27 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
+
+        //Setting up Globals
         maintv=findViewById(R.id.TextViewTeam)
         layout = findViewById<RelativeLayout>(R.id.contentLayout)
-        scenario = Scenario(this,layout,0)
+        mlayout = findViewById<LinearLayout>(R.id.mapLayout)
+        mappic = findViewById<ImageView>(R.id.imageViewMap)
+        nlayout = findViewById<LinearLayout>(R.id.nameLayout)
+        clayout = findViewById<LinearLayout>(R.id.codeLayout)
+        scenario = Scenario(this,layout)
 
         //Loading User
-        val sharedPref : SharedPreferences = applicationContext.getSharedPreferences(User.PREFERENCE_FILE_KEY,Context.MODE_PRIVATE)
-        val teamname = sharedPref.getString(User.KEY_TEAMNAME, "Default")?:""
-        val progression = sharedPref.getInt(User.KEY_PROG, 0)
-        user = User(progression,teamname,sharedPref)
+        user = User(this)
+        user.LoadName()
+        maintv.text = user.teamname
+        findViewById<EditText>(R.id.editTextName).setText(user.teamname)
 
-        maintv.text = teamname
+
+        findViewById<Button>(R.id.buttonName).setOnClickListener {ChangenameValidate(findViewById<EditText>(R.id.editTextName).text.toString())}
+        findViewById<Button>(R.id.buttonCode).setOnClickListener {EnterCodeValidate(findViewById<EditText>(R.id.editTextCode).text.toString())}
         fab.setOnClickListener {ScanQr() }
-
-
+        fab2.setOnClickListener{PrintMap()}
     }
 
 
@@ -56,6 +64,7 @@ class MainActivity : AppCompatActivity() {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_main, menu)
         menuInflater.inflate(R.menu.menu_teamname, menu)
+        menuInflater.inflate(R.menu.menu_code,menu)
         menuInflater.inflate(R.menu.menu_scenario, menu)
         return true
     }
@@ -66,6 +75,7 @@ class MainActivity : AppCompatActivity() {
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
             R.id.action_settings -> MyOptions()
+            R.id.code -> EnterCode()
             R.id.teamnamechange ->changename()
             R.id.scenario ->ChooseScenario()
             else -> super.onOptionsItemSelected(item)
@@ -77,10 +87,10 @@ class MainActivity : AppCompatActivity() {
         layout.removeAllViews()
 
         val b_dynamic = Button(this)
-        b_dynamic.text = "Scenario1"
+        b_dynamic.text = "Kalte"
         b_dynamic.setOnClickListener{ ChooseScenarioValidate(b_dynamic.text.toString())}
         val t = RelativeLayout.LayoutParams(MATCH_PARENT,WRAP_CONTENT)
-        t.topMargin = 200
+        t.topMargin = 10
         b_dynamic.layoutParams = t
         layout?.addView(b_dynamic)
 
@@ -91,14 +101,33 @@ class MainActivity : AppCompatActivity() {
     fun ChooseScenarioValidate(s : String)
     {
         when(s) {
-            "Scenario1" -> scenario = Scenario1(this,layout,user.progression)
+            "Kalte" -> {
+                scenario = Scenario1(this,layout)
+                user.LoadScenario(1)
+            }
             else ->  Toast.makeText(this, "Oups ! Erreur !", Toast.LENGTH_LONG).show()
         }
+        scenario.RestoreSave(user.scenarioSave)
         layout.removeAllViews()
 
+        setTitle(s)
         scenario.Beggin()
     }
 
+
+    fun PrintMap()
+    {
+        user.scenarioSave = scenario.SendSave()
+        user.SaveScenario()
+        mappic.setBackgroundResource(scenario.GetImage())
+        if(mlayout.visibility == View.VISIBLE)
+        {
+            SwapLayout(0)
+        }
+        else{
+            SwapLayout(3)
+        }
+    }
 
 
     fun ScanQr()
@@ -119,58 +148,51 @@ class MainActivity : AppCompatActivity() {
                 Log.e("Scan*******", "Cancelled scan")
             } else {
                 Log.e("Scan", "Scanned")
-                maintv.setText(result.contents)
+                scenario.GetAns(result.contents)
                 Toast.makeText(this, "Scanned: " + result.contents, Toast.LENGTH_LONG).show()
             }
         } else { // This is important, otherwise the result will not be passed to the fragment
             super.onActivityResult(requestCode, resultCode, data)
         }
+        SwapLayout(0)
     }
-
 
     fun changename(): Boolean
     {
-        layout.removeAllViews()
-
-
-        val tv_dynamic = TextView(this)
-        tv_dynamic.textSize = 20f
-        tv_dynamic.text = "Votre nom d'equipe :"
-        val r = RelativeLayout.LayoutParams(MATCH_PARENT,WRAP_CONTENT)
-        r.topMargin = 200
-        tv_dynamic.layoutParams = r
-        layout?.addView(tv_dynamic)
-
-        val et_dynamic = EditText(this)
-        et_dynamic.textSize = 20f
-        et_dynamic.setText(user.teamname)
-        val s = RelativeLayout.LayoutParams(MATCH_PARENT,WRAP_CONTENT)
-        s.topMargin = 400
-        et_dynamic.layoutParams = s
-        layout?.addView(et_dynamic)
-
-        val b_dynamic = Button(this)
-        b_dynamic.text = "Ok"
-        b_dynamic.setOnClickListener{ changenamevalidate(et_dynamic.text.toString())}
-        val t = RelativeLayout.LayoutParams(MATCH_PARENT,WRAP_CONTENT)
-        t.topMargin = 800
-        b_dynamic.layoutParams = t
-        layout?.addView(b_dynamic)
-
+        user.scenarioSave = scenario.SendSave()
+        user.SaveScenario()
+        SwapLayout(1)
         return true
     }
-    fun changenamevalidate(s:String): Boolean
+
+    fun ChangenameValidate(s:String): Boolean
     {
         user.teamname = s
-        user.Save()
-        layout.removeAllViews()
+        user.SaveName()
+
+        SwapLayout(0)
 
         maintv.text = s
-
-
         return true
     }
 
+
+    fun EnterCode():Boolean
+    {
+        user.scenarioSave = scenario.SendSave()
+        user.SaveScenario()
+        SwapLayout(2)
+        return true
+    }
+
+
+    fun EnterCodeValidate(s:String)
+    {
+        if(!scenario.GetAns(s))
+            Toast.makeText(this, "Mauvais code", Toast.LENGTH_LONG).show()
+        else
+            SwapLayout(0)
+    }
 
 
     fun MyOptions():Boolean
@@ -178,4 +200,45 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
+    fun SwapLayout(l:Int)
+    {
+        when(l){
+            0->{
+                layout.visibility = View.VISIBLE
+                nlayout.visibility = View.INVISIBLE
+                clayout.visibility = View.INVISIBLE
+                mlayout.visibility = View.INVISIBLE
+            }
+            1->{
+                layout.visibility = View.INVISIBLE
+                nlayout.visibility = View.VISIBLE
+                clayout.visibility = View.INVISIBLE
+                mlayout.visibility = View.INVISIBLE
+            }
+            2->{
+                layout.visibility = View.INVISIBLE
+                nlayout.visibility = View.INVISIBLE
+                clayout.visibility = View.VISIBLE
+                mlayout.visibility = View.INVISIBLE
+            }
+            3->{
+                layout.visibility = View.INVISIBLE
+                nlayout.visibility = View.INVISIBLE
+                clayout.visibility = View.INVISIBLE
+                mlayout.visibility = View.VISIBLE
+            }
+
+        }
+
+    }
+
+    override fun onBackPressed() {
+        SwapLayout(0)
+    }
+
+    override fun onPause() {
+        user.scenarioSave = scenario.SendSave()
+        user.SaveScenario()
+        super.onPause()
+    }
 }
