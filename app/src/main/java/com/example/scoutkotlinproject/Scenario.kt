@@ -5,10 +5,11 @@ import android.media.Image
 import android.text.Editable
 import android.view.ViewGroup
 import android.widget.*
+import androidx.core.view.children
 import java.security.AccessController.getContext
 import kotlin.jvm.internal.FunctionReference
 
-open class Scenario(private val context: Context,private val layout:RelativeLayout)
+open class Scenario(protected val context: Context,protected val layout:RelativeLayout)
 {
     lateinit var reader:EditText
     var prog = 0
@@ -30,15 +31,17 @@ open class Scenario(private val context: Context,private val layout:RelativeLayo
     {
         if(p==prog)
             return true
-        ClearLayout()
 
-        InstanceTextAt("Vous vous etes perdu, ceci est l'etape $p, vous devez trouver l'etape "+(prog+1).toString(),400)
+        ShowToast("Vous etes peut-être perdu ! Ceci est l'etape $p, vous devez trouver l'etape "+(prog).toString())
         return false
     }
 
     open fun RestoreSave(s:String,sVerif:Int = 0, lVerif:Int = 1):Boolean {
         if (s[0].toString().toInt() != sVerif || s.length != lVerif) {
-            Toast.makeText(context,"Attention ! La sauvegarde a l'air corrompue ! Tentative de récupération", Toast.LENGTH_LONG ).show()
+            if(s[0].toString().toInt() == 0)
+                Toast.makeText(context,"Creation d'une sauvegarde ...", Toast.LENGTH_LONG ).show()
+            else
+                Toast.makeText(context,"Attention ! La sauvegarde a l'air corrompue ! Tentative de récupération", Toast.LENGTH_LONG ).show()
             return false
         }
         return true
@@ -66,7 +69,7 @@ open class Scenario(private val context: Context,private val layout:RelativeLayo
         )
         r.topMargin = pos
         tv_dynamic.layoutParams = r
-        layout?.addView(tv_dynamic)
+        layout.addView(tv_dynamic)
     }
 
     fun InstanceReaderAt(s:String ,pos:Int = 0):EditText
@@ -80,10 +83,11 @@ open class Scenario(private val context: Context,private val layout:RelativeLayo
         )
         r.topMargin = pos
         et_dynamic.layoutParams = r
-        layout?.addView(et_dynamic)
+        et_dynamic.setSingleLine()
+        layout.addView(et_dynamic)
         return et_dynamic
     }
-    fun InstanceButtonAt(s:String ,pos:Int = 0,f:(m: String) -> Unit,reader:Editable)
+    fun InstanceButtonAt(s:String ,pos:Int = 0,f:(m: String) -> Unit,reader:Editable = EditText(context).text )
     {
         val b_dynamic = Button(context)
         b_dynamic.text = s
@@ -94,7 +98,7 @@ open class Scenario(private val context: Context,private val layout:RelativeLayo
         )
         t.topMargin = pos
         b_dynamic.layoutParams = t
-        layout?.addView(b_dynamic)
+        layout.addView(b_dynamic)
     }
 
     fun InstanceImageAt(name:String,pos:Int = 0)
@@ -108,7 +112,15 @@ open class Scenario(private val context: Context,private val layout:RelativeLayo
         r.height = 600
         r.setMargins(2,pos,2,0)
         img_dynamic.layoutParams = r
-        layout?.addView(img_dynamic)
+        layout.addView(img_dynamic)
+        img_dynamic.bringToFront()
+    }
+
+    fun DeleteInLayout(){
+        for(child in layout.children){
+            if(child is Button)
+                layout.removeView(child)
+        }
     }
 
     open fun GetImage():Int
@@ -116,7 +128,10 @@ open class Scenario(private val context: Context,private val layout:RelativeLayo
         return android.R.drawable.ic_menu_help
     }
 
+    fun Boolean.toInt() = if (this) 1 else 0
+    fun Int.toBoolean() = (this == 1)
 
+    fun ShowToast(s: String)= Toast.makeText(context,s, Toast.LENGTH_LONG ).show()
 
-    fun ClearLayout(){ layout.removeAllViews()}
+    fun ClearLayout()= layout.removeAllViews()
 }

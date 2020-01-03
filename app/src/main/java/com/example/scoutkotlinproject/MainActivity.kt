@@ -1,10 +1,9 @@
 package com.example.scoutkotlinproject
 
-import android.content.Context
+import android.Manifest
 import android.content.Intent
-import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -13,6 +12,8 @@ import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.example.scoutkotlinproject.Scenarios.Scenario1
 import com.google.zxing.integration.android.IntentIntegrator
 import kotlinx.android.synthetic.main.activity_main.*
@@ -29,13 +30,19 @@ class MainActivity : AppCompatActivity() {
     lateinit var mappic : ImageView
     lateinit var user : User
 
-
+    val scenariolist = listOf<String>("","Kalte")
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
+
+        //CheckPermission
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.RECORD_AUDIO), 1)
+        }
+
 
         //Setting up Globals
         maintv=findViewById(R.id.TextViewTeam)
@@ -48,7 +55,7 @@ class MainActivity : AppCompatActivity() {
 
         //Loading User
         user = User(this)
-        user.LoadName()
+        user.LoadInit()
         maintv.text = user.teamname
         findViewById<EditText>(R.id.editTextName).setText(user.teamname)
 
@@ -57,6 +64,8 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.buttonCode).setOnClickListener {EnterCodeValidate(findViewById<EditText>(R.id.editTextCode).text.toString())}
         fab.setOnClickListener {ScanQr() }
         fab2.setOnClickListener{PrintMap()}
+
+        if(user.curscenario != 0)ChooseScenarioValidate("",user.curscenario)
     }
 
 
@@ -84,31 +93,44 @@ class MainActivity : AppCompatActivity() {
 
     fun ChooseScenario():Boolean
     {
+        user.scenarioSave = scenario.SendSave()
+        user.SaveScenario()
+
         layout.removeAllViews()
 
-        val b_dynamic = Button(this)
-        b_dynamic.text = "Kalte"
-        b_dynamic.setOnClickListener{ ChooseScenarioValidate(b_dynamic.text.toString())}
+        val bdynamic = Button(this)
+        bdynamic.text = scenariolist[1]
+        bdynamic.setOnClickListener{ ChooseScenarioValidate(bdynamic.text.toString())}
         val t = RelativeLayout.LayoutParams(MATCH_PARENT,WRAP_CONTENT)
         t.topMargin = 10
-        b_dynamic.layoutParams = t
-        layout?.addView(b_dynamic)
+        bdynamic.layoutParams = t
+        layout.addView(bdynamic)
 
 
         return true
     }
 
-    fun ChooseScenarioValidate(s : String)
+    fun ChooseScenarioValidate(s : String,def:Int=0)
     {
-        when(s) {
-            "Kalte" -> {
-                scenario = Scenario1(this,layout)
-                user.LoadScenario(1)
-            }
+        var n = 0
+        when(s){
+            "Kalte"->n=1
+            ""->n=def
             else ->  Toast.makeText(this, "Oups ! Erreur !", Toast.LENGTH_LONG).show()
         }
+
+        when(n) {
+            1 ->scenario = Scenario1(this,layout)
+            else->return
+        }
+
+
+        user.LoadScenario(n)
         scenario.RestoreSave(user.scenarioSave)
         layout.removeAllViews()
+
+        user.curscenario=n
+        user.SaveCurrent()
 
         setTitle(s)
         scenario.Beggin()
@@ -197,6 +219,8 @@ class MainActivity : AppCompatActivity() {
 
     fun MyOptions():Boolean
     {
+        user.scenarioSave = scenario.SendSave()
+        user.SaveScenario()
         return true
     }
 
@@ -233,6 +257,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
+        user.scenarioSave = scenario.SendSave()
+        user.SaveScenario()
         SwapLayout(0)
     }
 
