@@ -2,17 +2,12 @@ package com.example.scoutkotlinproject.Scenarios
 
 import android.Manifest
 import android.content.Context
-import android.content.Context.SENSOR_SERVICE
 import android.content.pm.PackageManager
-import android.hardware.Sensor
-import android.hardware.SensorManager
 import android.media.MediaRecorder
 import android.widget.Button
 import android.widget.EditText
 import android.widget.RelativeLayout
 import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.getSystemService
-import androidx.core.view.children
 import com.example.scoutkotlinproject.R
 import com.example.scoutkotlinproject.Scenario
 import java.lang.StringBuilder
@@ -30,7 +25,7 @@ class Scenario1 (c: Context,l:RelativeLayout) : Scenario(c,l) {
     val repliques = mutableListOf("T'es mal placé dans la chaîne alimentaire pour faire ta grande gueule !","Qui que je sois au fond de moi, je ne suis jugé que par mes actes","Les ogres, c'est comme les oignons !\n Snif ! Ils shlinguent ?","Je vous vois mal rentrer dans une droguerie et... et demander du plutonium.","Tu as confiance en moi ?","Princesse ! Retourne dans ta forêt ! Ne meurs pas en vain ! La retraite est aussi une preuve de courage !","La cuillère n’existe pas !","Okay !","Il a une belle tête de vainqueur!","Carpe Diem. Profitez du jour présent. Que vos vies soient extraordinaires","J’aime me beurrer la biscotte","J’ai l’impression que nous ne sommes plus au Kansas.","Va ! Accomplis ton rêve !\n D'accord !\n Pas toi ! Ton rêve est nul !","Qu'il est choux ! On dirait un tout petit bébé licorne","Qu’on leur coupe la tête!","Vers l'infini et au dela","Tu vois ce moment entre le sommeil et le rêve, où on se souvient d'avoir rêvé ? C'est la que je t'aimerai toujours et que je t'attendrai !","Un jour tu verras, ton coeur chantera, et tu comprendra","L'amour brille sous les étoiles","je n'ai de sympathie pour aucun de vous, bande d'asticots, ni même la patience de prétendre le contraire !")
     val mRecorder :MediaRecorder = MediaRecorder()
 
-    override fun RestoreSave(s: String,verif:Int, lVerif:Int):Boolean {
+    override fun RestoreSave(s: String,sVerif:Int, lVerif:Int):Boolean {
         if(super.RestoreSave(s,1,9)){
             prog = s.substring(1,3).toInt()
             skill = s[3].toString().toInt()
@@ -53,7 +48,7 @@ class Scenario1 (c: Context,l:RelativeLayout) : Scenario(c,l) {
     }
 
     override fun SendSave(): String {
-        var save = StringBuilder()
+        val save = StringBuilder()
         save.append("1")
         if(prog<10)
             save.append("0")
@@ -376,8 +371,8 @@ class Scenario1 (c: Context,l:RelativeLayout) : Scenario(c,l) {
         else
             if(jeu<0)
             {
-                DeleteAllOfTypeInLayout<android.widget.Button>()
-                DeleteAllOfTypeInLayout<android.widget.EditText>()
+                DeleteAllOfTypeInLayout<Button>()
+                DeleteAllOfTypeInLayout<EditText>()
                 InstanceTextAt("Le monstre ne vous ennuira plus. Il n'y a rien d'autre ici. Vous ressortez et choisissez une autre porte",1480+choix*200)
                 jeu=0
                 prog=6

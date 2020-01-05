@@ -1,13 +1,10 @@
 package com.example.scoutkotlinproject
 
 import android.content.Context
-import android.media.Image
 import android.text.Editable
 import android.view.ViewGroup
 import android.widget.*
 import androidx.core.view.children
-import java.security.AccessController.getContext
-import kotlin.jvm.internal.FunctionReference
 
 open class Scenario(protected val context: Context,protected val layout:RelativeLayout)
 {
@@ -119,12 +116,6 @@ open class Scenario(protected val context: Context,protected val layout:Relative
     inline fun <reified T> DeleteAllOfTypeInLayout() {
         for (child in layout.children) {
             if (child is T)
-                layout.removeView(child)
-        }
-    }
-    fun DeleteInLayout(){
-        for(child in layout.children){
-            if(child is Button)
                 layout.removeView(child)
         }
     }
