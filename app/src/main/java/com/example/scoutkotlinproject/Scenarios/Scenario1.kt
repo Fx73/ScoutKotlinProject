@@ -77,6 +77,8 @@ class Scenario1 (c: Context,l:RelativeLayout) : Scenario(c,l) {
             7->return if(jeu!=2)R.drawable.s1capture7 else R.drawable.s1capture8
             8->return R.drawable.s1capture8
             9->return R.drawable.s1capture9
+            10->return R.drawable.s1capture10
+            11->return R.drawable.s1capture11
             else->return super.GetImage()
         }
     }
@@ -89,10 +91,10 @@ class Scenario1 (c: Context,l:RelativeLayout) : Scenario(c,l) {
             2->if(found)Etape2()else Etape1()
             3->if(found)Etape3()else Etape2()
             4->if(found)Etape4()else Etape3()
-            5->if(found)Etape5()else Etape4()
+            5->if(found)Etape5()else Etape4v(choix)
             6->if(found)Etape6()else Etape5r()
             7->if(found)Etape7()else Etape6v2v("")
-            8->if(found){if(jeu!=2)Etape8()else Etape8v1()}else Etape7r()
+            8->if(found){if(jeu==2)Etape8v1()else if(jeu==0) Etape8() else Etape8v0() }else Etape7r()
             9->if(found)Etape9()else Etape8r()
             10->if(found)Etape10()else Etape9r()
             11->if(found)Etape11()else Etape10r()
@@ -106,7 +108,7 @@ class Scenario1 (c: Context,l:RelativeLayout) : Scenario(c,l) {
 
 
     override fun GetAns(S: String):Boolean {
-        if(S.length>=7 && S.toNormalCase().substring(0,7) == "FORCER") {
+        if(S.length>=8 && S.toNormalCase().substring(0,6) == "FORCER") {
             prog = S.substring(7).toInt()
             return true
         }
@@ -127,25 +129,25 @@ class Scenario1 (c: Context,l:RelativeLayout) : Scenario(c,l) {
             "E2 LOUP 3" -> Etape2v1(100)
             "ETAPE 3 : CHATEAU EN VUE" -> Etape3()
             "ETAPE 4 : ENTREE DU CHATEAU" -> Etape4()
-            "E5 PORTE" -> Etape4v(0)
-            "E5 ESCALIER" -> Etape4v(1)
-            "E5 TELEKINESIE" -> Etape4v(2)
+            "E4 PORTE" -> Etape4v(0)
+            "E4 ESCALIER" -> Etape4v(1)
+            "E4 TELEKINESIE" -> Etape4v(2)
             "ETAPE 5 : EXPLORATION" ->Etape5()
             "ETAPE 6 : CACHOTS" -> Etape6()
             "E6 PORTE 0"->Etape6v0()
             "E6 PORTE 1"->Etape6v1()
             "E6 PORTE 2"->Etape6v2()
             "E6 PORTE 3"->Etape6v3()
-            "ETAPE 7 : DONJON bas"->Etape7()
+            "ETAPE 7 : DONJON BAS"->Etape7()
             "E7 COMBAT"->Etape7v0()
             "E7 FUITE"->Etape7v1()
             "E7 CAMOUFLAGE"->Etape7v2()
             "E7 PASSAGE"->Etape7v3()
-            "ETAPE 8 : DONJON milieu"->Etape8()
+            "ETAPE 8 : DONJON MILIEU"->Etape8()
             "E8 GAUCHE"->Etape8v0()
             "E8 DROITE"->Etape8v1()
             "E8 6E SENS"->Etape8v2()
-            "ETAPE 9 : DONJON haut"->Etape9()
+            "ETAPE 9 : DONJON HAUT"->Etape9()
             "ETAPE 10 : BOSS"->Etape10()
             "ETAPE 11 : FIN"->Etape11()
             else -> return false
@@ -154,7 +156,7 @@ class Scenario1 (c: Context,l:RelativeLayout) : Scenario(c,l) {
     }
 
     fun Etape1() {
-        if (!CheckProg(1)) return
+        if (!CheckProg(1,2)) return
         found = true
         ClearLayout()
         if (skill == 0) {
@@ -169,73 +171,63 @@ class Scenario1 (c: Context,l:RelativeLayout) : Scenario(c,l) {
     }
 
     fun Etape2() {
-        if (!CheckProg(2)) return
+        if (!CheckProg(2,3)) return
         found = true
+        ClearLayout()
+
         if (choix != 1 && choix != 2) {
-            ClearLayout()
             InstanceTextAt("Vous n'avez pas choisi de chemin. Vous marchez aleatoirement et vous vous retouvez dans la montagne. Rescannez cette étape pour continuer ...")
             choix=2
             return
         }
-        if (jeu == 0 || jeu == 1) {
-            jeu=1
-            ClearLayout()
-            if (choix == 0) {
+        if (choix == 1) {
                 InstanceTextAt("Vous avez deja marché 2 jours dans la valée. Vous dressez un campement ici, mais vous n'avez pas assez d'eau. Vous devez aller en chercher à la rivière qui est marquée sur votre carte")
-                InstanceImageAt("s1valley2",300)
-            }
-            else {
-                InstanceTextAt("Vous avancez prudement dans les montagnes depuis un jour sans encombre, et la nuit commence à tomber, qaund tout à coup vous entendez le hurlement d'un loup. Ils sont autours de vous ! Vite, trouvez les, avant qu'ils ne vous trouvent ! ")
-                InstanceImageAt("s1mountain2",600)
-            }
-        } else {
-            if (choix == 0) {
+                InstanceImageAt("s1valley2",480)
+        }
+        else {
+                InstanceTextAt("Vous avancez prudement dans les montagnes depuis un jour sans encombre, et la nuit commence à tomber, quand tout à coup vous entendez le hurlement d'un loup. Puis d'autres. Ils sont 3 ! Ils sont autours de vous ! Vite, trouvez les, avant qu'ils ne vous trouvent ! ")
+                InstanceImageAt("s1mountain2",640)
+        }
+
+        if (choix == 1 && jeu == 2) {
+                InstanceTextAt("Bravo, vous avez de l'eau. Vous continuez votre chemin dans la vallée !",  1100  )
+                prog = 3
+                found = false
+        }
+        if (choix == 2 && jeu in 111..113) {
                 InstanceTextAt(
-                    "Bravo, vous avez de l'eau. Vous continuez votre chemin dans la vallée !",
-                    1100
+                    "Bravo, vous vous etes bien défendu. Le jour se lève, et vous pouvez repartir !",
+                    1300
                 )
                 prog = 3
                 found = false
-            } else {
-                if (jeu in 111..113) {
-                    InstanceTextAt(
-                        "Bravo, vous vous etes bien défendu. Le jour se lève, et vous pouvez repartir !",
-                        1300
-                    )
-                    prog = 3
-                    found = false
-                } else{
-                    InstanceImageAt("s1mountain2",600)
-                    InstanceTextAt("Vous n'avez pas encore trouvé tout les loups", 1500)
-                }
             }
-        }
     }
 
     fun Etape2v0() {
         if (!CheckProg(2)) return
         if(choix==2)return
         jeu = 2
-        InstanceTextAt("Vous avez l'eau. Revenez au campement !", 900)
+        InstanceTextAt("Vous avez l'eau. Revenez au campement !", 1100)
     }
 
     fun Etape2v1(a: Int) {
         if (a == 1 && jeu % 2 != 1) {
-            InstanceTextAt("Bravo, vous avez tué un loup !", 1200)
+            InstanceTextAt("Bravo, vous avez occis un loup !", 1260)
             jeu += 1
         }
         if (a == 10 && (jeu / 10) % 2 != 1) {
-            InstanceTextAt("Bravo, vous avez tué un loup !", 1300)
+            InstanceTextAt("Bravo, vous avez occis un loup !", 1360)
             jeu += 10
         }
         if (a == 100 && (jeu / 100) % 2 != 1) {
-            InstanceTextAt("Bravo, vous avez tué un loup !", 1400)
+            InstanceTextAt("Bravo, vous avez occis un loup !", 1460)
             jeu += 100
         }
     }
 
     fun Etape3() {
-        if (!CheckProg(3) && !CheckProg(4)) return
+        if (!CheckProg(3,4)) return
         ClearLayout()
         InstanceImageAt("s1fortress")
         if (choix == 1) {
@@ -250,34 +242,31 @@ class Scenario1 (c: Context,l:RelativeLayout) : Scenario(c,l) {
     fun Etape4() {
         if (!CheckProg(4)) return
         found = true
+        choix = 0
         ClearLayout()
-        jeu= 0
         InstanceTextAt("Apres avoir passé la cour du chateau vous entrez dans une grande salle, avec une statue à l'air maléfique en son centre. Vous sentez qu'il ne faut pas la toucher. Il y a une porte sur le coté et un escalier au fond. Si vous maitrisez la telekinesie vous pouvez essayer de déplacer la statue.")
-        InstanceImageAt("s1statueroom",400)
+        InstanceImageAt("s1statueroom",640)
     }
 
     fun Etape4v(a:Int) {
-        if (!CheckProg(4) && !CheckProg(5)) return
-        if(jeu == 1)
-        {
-            ClearLayout()
-            InstanceTextAt("Vous changez d'avis.Vous revenez au centre la pièce. Explorez la à nouveau pour pouvoir choisir autre chose.")
-            prog=4
-            found = true
-            return
-        }
-        jeu = 1
+        if (!CheckProg(4,5)) return
+
+        ClearLayout()
+        InstanceTextAt("Apres avoir passé la cour du chateau vous entrez dans une grande salle, avec une statue à l'air maléfique en son centre. Vous sentez qu'il ne faut pas la toucher. Il y a une porte sur le coté et un escalier au fond. Si vous maitrisez la telekinesie vous pouvez essayer de déplacer la statue.")
+        InstanceImageAt("s1statueroom",640)
+
         when(a){
-            0->InstanceTextAt("Vous vous avancez vers la porte ... ",1000)
-            1->InstanceTextAt("Vous vous engagez dans l'escalier ... ",1000)
-            2->if(skill==3) InstanceTextAt("Vous soulevez la pierre avec la force de votre mental. Une trappe secrète part de dessous. Vous vous y engagez",1000)else{ InstanceTextAt("Vous essayez de bouger la pierre par la pensée mais rien ne se passe",1300);jeu=0;return}
+            0->InstanceTextAt("Vous vous avancez vers la porte ... ",1260)
+            1->InstanceTextAt("Vous vous engagez dans l'escalier ... ",1260)
+            2->if(skill==3) InstanceTextAt("Vous soulevez la pierre avec la force de votre mental. Une trappe secrète part de dessous. Vous vous y engagez",1260)else{ InstanceTextAt("Vous essayez de bouger la pierre par la pensée mais rien ne se passe",1260);return}
         }
         choix = a
         prog = 5
         found=false
     }
+
     fun Etape5() {
-        if (!CheckProg(5) && !CheckProg(6)) return
+        if (!CheckProg(5,6)) return
         found=true
         ClearLayout()
         InstanceImageAt("s1tower")
@@ -326,7 +315,7 @@ class Scenario1 (c: Context,l:RelativeLayout) : Scenario(c,l) {
 
     fun Etape6v0()
     {
-        if (!CheckProg(6) && !CheckProg(99)) return
+        if (!CheckProg(6,99)) return
         ClearLayout()
         prog=99
         jeu=9
@@ -382,7 +371,7 @@ class Scenario1 (c: Context,l:RelativeLayout) : Scenario(c,l) {
 
     fun Etape6v1()
     {
-        if (!CheckProg(6) && !CheckProg(98)) return
+        if (!CheckProg(6,98)) return
         jeu = 0
         prog=98
         ClearLayout()
@@ -470,7 +459,7 @@ class Scenario1 (c: Context,l:RelativeLayout) : Scenario(c,l) {
         found = true
         ClearLayout()
         InstanceTextAt("Vous arrivez avec le vieux bonhomme jusqu'au pied du donjon. Vous le suivez jusqu'à l'intérieur")
-        InstanceImageAt("s1dungeon0",300)
+        InstanceImageAt("s1dungeon0",280)
         InstanceTextAt("Tout à coup, vous entendez venant d'une porte sur le coté. En jetant un oeil vous voyez arriver un goupe de soldats armés jusqu'au dents, prêt à en découdre. Vous pouvez les attendre pour combattre, reculer prudement hors la tour, ou vous camoufler si vous maîtrisez cette technique",900)
         jeu =1
     }
@@ -480,10 +469,10 @@ class Scenario1 (c: Context,l:RelativeLayout) : Scenario(c,l) {
         prog=97
         ClearLayout()
         InstanceTextAt("3 créatures infernales vous tombent dessus")
-        InstanceImageAt("s1monsters",200)
+        InstanceImageAt("s1monsters",190)
         InstanceTextAt("Pendant que quelques un d'entre vous font tournouyer leurs épées pour le tenir à distance, il faut préparer un sort pour les immobiliser.",800)
-        InstanceImageAt("s1spell",1000)
-        InstanceButtonAt("Lancer sort",1800,this::Etape7v0v,InstanceReaderAt("",1600).text)
+        InstanceImageAt("s1spell",1200,1000)
+        InstanceButtonAt("Lancer sort",2320,this::Etape7v0v,InstanceReaderAt("",2200).text)
 
     }
     fun Etape7v0v(s:String){
@@ -503,16 +492,18 @@ class Scenario1 (c: Context,l:RelativeLayout) : Scenario(c,l) {
     {
         if(jeu==0)return
         ClearLayout()
-        InstanceImageAt("s1monsters")
-        InstanceTextAt("Vous sortez du donjon en courant. Discretement, vous observez arriver 3 créatures, qui se mettent à monter la garde. Vous allez devoir les affronter, à moins que vous ne parveniez à trouver un autre chemin",600)
+        InstanceTextAt("Vous sortez du donjon en courant. Discrètement, vous observez alors l'arrivée de 3 créatures, qui se mettent à monter la garde.")
+        InstanceImageAt("s1monsters",360)
+        InstanceTextAt(" Vous allez devoir les affronter, à moins que vous ne parveniez à trouver un autre chemin",980)
     }
     fun Etape7v2()
     {
         if(skill != 1 && skill !=4) return
         if(jeu==0)return
         ClearLayout()
-        InstanceImageAt("s1monsters")
-        InstanceTextAt("Votre camouflage est parfait et 3 créatures passent à deux mètres de vous sans vous voir. Le vieux tremble, mais vous le tenez fermement pour qu'il ne fasse pas de bétise. Après avoir attendu que le son de leur pas disparaisse au loin, vous entamez la montée du donjon.",600)
+        InstanceTextAt("Votre camouflage est parfait et 3 créatures passent à deux mètres de vous sans vous voir.")
+        InstanceImageAt("s1monsters",280)
+        InstanceTextAt("Le vieux tremble, mais vous le tenez fermement pour qu'il ne fasse pas de bêtise. Après avoir attendu que le son de leur pas disparaisse au loin, vous entamez la montée du donjon.",900)
         prog=8
         found = false
     }
@@ -528,7 +519,7 @@ class Scenario1 (c: Context,l:RelativeLayout) : Scenario(c,l) {
     fun Etape7r(){
         ClearLayout()
         InstanceImageAt("s1dungeon0")
-        InstanceTextAt("Vous entrez et montez dans le donjon",600)
+        InstanceTextAt("Après avoir traversé le chateau, vous êtes arrivés au pied du donjon. Vous vous êtes ensuite engagé dans l'escalier et commencé votre ascension ...",600)
     }
 
 
@@ -539,7 +530,7 @@ class Scenario1 (c: Context,l:RelativeLayout) : Scenario(c,l) {
         found = true
         ClearLayout()
         InstanceTextAt("Après avoir monté pendant de longue minutes, vous arrivez dans un grand couloir enfumé.")
-        InstanceImageAt("s1dungeon1",300)
+        InstanceImageAt("s1dungeon1",280)
         if(choix==1)
             InstanceTextAt("Deux issues dont situés d'un coté et de l'autre du couloir. Le vieux vous indique que les deux montent au sommet de la tour. Vous pouvez donc choisir n'impore lequel. Dans celui de gauche on entends des bruits de pas lointain. Si vous maitrisez le 6e sens vous pouvez l'utiliser.",900)
         else
@@ -550,14 +541,19 @@ class Scenario1 (c: Context,l:RelativeLayout) : Scenario(c,l) {
     fun Etape8v0()//Gauche
     {
         if(jeu==1)return
+        jeu = 3
         ClearLayout()
-        InstanceImageAt("s1renfort",500)
+        InstanceImageAt("s1renfort",580)
         if(skill == 4 || skill == 5 || skill == 6) {
-            InstanceTextAt("Vous montez les escaliers à droite. Les pas sont de plus en plus fort. Enfin vous les apercevez. Il s'agit des renforts que vous avez appelés avec le feu sur la tour. Vous continuez votre route avec un groupe largement plus nombreux.")
-            InstanceTextAt("Pendant la bousculade qui a suivi la retrouvaille, il semble que le vieil homme se soit fait la malle. Tant pis, vous allez devoir continuer sans lui",1100)
+            InstanceTextAt("Vous montez les escaliers à gauche. Les pas sont de plus en plus fort. Enfin vous les apercevez. Il s'agit des renforts que vous avez appelés avec le feu sur la tour. Vous continuez votre route avec un groupe largement plus nombreux.")
+            if(choix==1)InstanceTextAt("Pendant la bousculade qui a suivi la retrouvaille, il semble que le vieil homme se soit fait la malle. Tant pis, vous allez devoir continuer sans lui",1200)
+            choix = 0
+            prog = 9
+            jeu = 0
+            found = false
         }
         else{
-            InstanceTextAt("Vous montez les escaliers à droite. Les pas sont de plus en plus fort. Enfin vous les apercevez. Il s'agit de grands guerriers revètus d'armure et lourdement armés. Vous allez devoir vous défendre. Vous allez A TOUR DE ROLE devoir lancer un sort très puissant qui nécéssite beaucoup de bruit. Vous avez 5 essais. Attaquez après avoir fait du bruit !")
+            InstanceTextAt("Vous montez les escaliers à gauche. Les pas sont de plus en plus fort. Enfin vous les apercevez. Il s'agit de grands guerriers revètus d'armure et lourdement armés. Vous allez devoir vous défendre.");InstanceTextAt ("Vous allez A TOUR DE ROLE devoir lancer un sort très puissant qui nécéssite beaucoup de bruit. Vous avez 6 essais. Attaquez après avoir fait du bruit !",1200)
             if (ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
                 mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC)
                 mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
@@ -567,31 +563,30 @@ class Scenario1 (c: Context,l:RelativeLayout) : Scenario(c,l) {
                 mRecorder.start()
             }else
             {
-                InstanceTextAt("Attention, l'application n'a pas l'autorisation d'acceder au microphone. Le mini-jeu ici est désactivé. Allez mettre l'autorisation, ou appuyez juste sur attaque pour continuer",1300)
+                InstanceTextAt("Attention, l'application n'a pas l'autorisation d'acceder au microphone. Le mini-jeu ici est désactivé. Allez mettre l'autorisation, ou appuyez juste sur attaque pour continuer",1660)
             }
 
-            InstanceButtonAt("Attaquer",1100,this::Etape8v0v)
-            jeu = 3
+            InstanceButtonAt("Attaquer",1580,this::Etape8v0v)
         }
     }
     fun Etape8v0v(s:String)
     {
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
-            InstanceTextAt("Guerrier "+(jeu-2).toString()+" : Amplitude "+mRecorder.maxAmplitude.toString(),1200+(jeu-2)*100)}
+            InstanceTextAt("Guerrier "+(jeu-2).toString()+" : Amplitude "+mRecorder.maxAmplitude.toString(),1740+(jeu-2)*100)}
         if(jeu<8)
             jeu++
         else{
             if(choix==0)
-                InstanceTextAt("Hourra, les guerriers sont à terre ! Vous montez vers le sommet",1800)
+                InstanceTextAt("Hourra, les guerriers sont à terre ! Vous montez vers le sommet.",2440)
             else
-                InstanceTextAt("Hourra, les guerriers sont à terre ! Mais il semblerai que le vieil homme se soit enfuit pendant la bataille. Tant pis, vous continuez vers le sommet",1800)
+                InstanceTextAt("Hourra, les guerriers sont à terre ! Mais il semblerai que le vieil homme se soit enfuit pendant la bataille. Tant pis, vous continuez vers le sommet.",2440)
 
             if (ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
                 mRecorder.stop()
             }
+            DeleteAllOfTypeInLayout<Button>()
             choix = 0
             prog = 9
-            jeu = 0
             found = false
         }
     }
@@ -601,9 +596,9 @@ class Scenario1 (c: Context,l:RelativeLayout) : Scenario(c,l) {
         if(skill == 4 || skill == 5 || skill == 6)
             skill-=3
         ClearLayout()
-        InstanceTextAt("Vous vous engagez dans l'escalier de droite. Mais tout en haut, une porte fermée bloque la voie, avec une image d'oreille déssinée dessus. Il faut probablement lui dire quelque chose. Un étrange mur se trouve tout à coté")
+        InstanceTextAt("Vous vous engagez dans l'escalier de droite. Mais tout en haut, une porte fermée bloque la voie, avec une image d'oreille déssinée dessus. Il faut probablement lui dire quelque chose. Un étrange mur se trouve tout à coté :")
         InstanceImageAt("s1imagemot",600)
-        InstanceButtonAt("Dire",1400,this::Etape8v1v,InstanceReaderAt("",1280).text)
+        InstanceButtonAt("Dire",1300,this::Etape8v1v,InstanceReaderAt("",1180).text)
 
         InstanceTextAt("(Vous pouvez reflechir en marchant, la carte suivante est quand meme débloquée)",1600)
         jeu = 2
@@ -612,7 +607,7 @@ class Scenario1 (c: Context,l:RelativeLayout) : Scenario(c,l) {
         if(s.toNormalCase()=="COQ")
         {
             ClearLayout()
-            InstanceTextAt("Bravo, la porte s'ouvre. Vous pouvez la franchir")
+            InstanceTextAt("Bravo, la porte s'ouvre. Vous pouvez la franchir.")
             jeu=0
             prog = 9
             found = false
@@ -625,9 +620,9 @@ class Scenario1 (c: Context,l:RelativeLayout) : Scenario(c,l) {
         if(skill != 2 && skill !=5) return
         ClearLayout()
         if(skill == 2)
-            InstanceTextAt("Votre 6e sens vous prévient qu'il s'agit d'une grosse escouade d'hommes en armes, avec des intentions hostiles. Vous remerciez le ciel d'avoir cette capacité et prenez l'autre chemin")
+            InstanceTextAt("Votre 6e sens vous prévient qu'il s'agit d'une grosse escouade d'hommes en armes, avec des intentions hostiles. Vous remerciez le ciel d'avoir cette capacité et prenez l'autre chemin.")
         else
-            InstanceTextAt("Votre 6e sens vous prévient qu'il s'agit d'une grosse escouade d'hommes en armes, mais également que vous les connaissez. Vous montez les escaliers à leur rencontre. Il s'agit des renforts que vous avez appelés avec le feu sur la tour. Vous continuez votre route avec un groupe largement plus nombreux.")
+            {InstanceTextAt("Votre 6e sens vous prévient qu'il s'agit d'une grosse escouade d'hommes en armes, mais également que vous les connaissez. Vous montez les escaliers à leur rencontre.");InstanceTextAt( "Il s'agit des renforts que vous avez appelés avec le feu sur la tour. Vous continuez votre route avec un groupe largement plus nombreux.",1120)}
         InstanceImageAt("s1renfort",500)
         prog = 9
         found = false
@@ -635,7 +630,7 @@ class Scenario1 (c: Context,l:RelativeLayout) : Scenario(c,l) {
     fun Etape8r(){
         ClearLayout()
         InstanceImageAt("s1dungeon1")
-        InstanceImageAt("Vous montez toujours dans la tour",600)
+        InstanceTextAt("Vous montez toujours dans la tour ...",600)
     }
     fun Etape9()
     {
@@ -644,32 +639,36 @@ class Scenario1 (c: Context,l:RelativeLayout) : Scenario(c,l) {
         ClearLayout()
         if(choix==1){
             InstanceTextAt("Le vieil homme s'avance et vous dit 'Comme promis, je vais vous montrer ou se trouve le trésor'.\n Il s'approche d'un mur, et appuie dessus. Le mur coulisse. ")
-            InstanceImageAt("s1treasure",480)
-            InstanceTextAt("Puis il vous montre une porte immense : 'Le sorcier se trouve derrière'",1100)
+            InstanceImageAt("s1treasure",400)
+            InstanceTextAt("Puis il vous montre une porte immense : 'Le sorcier se trouve là !'",1020)
+            InstanceImageAt("s1bossgate",1200,1500)
+            InstanceTextAt("La porte est fermée. Il y a cinq vers écrits sur le fronton : \n\nSans voix , il hurle,\nSans ailes , il voltige,\nSans dents , il mord\nSans bouche , il murmure,\nSans main, il caresse.",2710)
+            InstanceButtonAt("Dire",3420,this::Etape9v,InstanceReaderAt("",3300).text)
         }
         else
         {
             InstanceTextAt("Vous arrivez tout en haut du donjon. Il s'agit d'une immense salle, dont les murs sont recouvers de tapisseries. Vous sondez ces dernières dans l'espoir de trouver une salle secrète, en vain. Vous faisant face se trouve une porte immense . ")
+            InstanceImageAt("s1bossgate",600,1800)
+            InstanceTextAt("La porte est fermée. Il y a cinq vers écrits sur le fronton : \n\nSans voix , il hurle,\nSans ailes , il voltige,\nSans dents , il mord\nSans bouche , il murmure,\nSans main, il caresse.",2420)
+            InstanceButtonAt("Dire",3120,this::Etape9v,InstanceReaderAt("",3000).text)
         }
-        InstanceImageAt("s1bossgate",1300)
-        InstanceTextAt("La porte est fermée. Il y a cinq vers écrits sur le fronton : \n\n Sans voix , il hurle,\nSans ailes , il voltige,\nSans dents , il mord\nSans bouche , il murmure,\n Sans main, il caresse.",1900)
-        InstanceButtonAt("Dire",2600,this::Etape9v,InstanceReaderAt("",2480).text)
 
-        prog=10
-        found = false
+
     }
     fun Etape9v(s:String)
     {
         if(s.toNormalCase()=="VENT" || s.toNormalCase() == "LE VENT") {
             DeleteAllOfTypeInLayout<Button>()
             DeleteAllOfTypeInLayout<EditText>()
-            InstanceTextAt("La porte s'ouvre lentement. Vous vous en approchez, doucement ...",2500 )
+            InstanceTextAt("La porte s'ouvre lentement. Vous vous en approchez, doucement ...",3360 )
+            prog=10
+            found = false
         }
     }
     fun Etape9r(){
         ClearLayout()
-        InstanceImageAt("s1bossgate")
-        InstanceTextAt("Après être arrivé toute en haut de la tour,vous arrivez en face d'une porte immense. Celle ci s'ouvre lentement. Vous vous en approchez, doucement ...",600)
+        InstanceImageAt("s1bossgate",0,1800)
+        InstanceTextAt("Après être arrivé toute en haut de la tour,vous arrivez en face d'une porte immense. Celle ci s'ouvre lentement. Vous vous en approchez, doucement ...",1820)
     }
 
 
@@ -757,8 +756,8 @@ class Scenario1 (c: Context,l:RelativeLayout) : Scenario(c,l) {
         else
         {
             InstanceTextAt("Quelle incroyable victoire ! Vous avez terrassé le sorcier et récuperer son trésor. C'est un exploit dont on parlera longtemps !",600)
-            InstanceImageAt("s1treasure",900)
-            InstanceTextAt("C'est la gloire et la richesse pour de nombreuses années ! \nA bientôt pour d'autres aventures",1500)
+            InstanceImageAt("s1treasure",960)
+            InstanceTextAt("C'est la gloire et la richesse pour de nombreuses années ! \nA bientôt pour d'autres aventures",1560)
         }
     }
 
@@ -768,5 +767,8 @@ class Scenario1 (c: Context,l:RelativeLayout) : Scenario(c,l) {
         skill=0
         choix=0
         jeu=0
+        found=false
+        for (e in 0..filmsbool.size)
+            filmsbool[e]=false
     }
 }

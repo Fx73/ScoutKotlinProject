@@ -170,8 +170,8 @@ class MainActivity : AppCompatActivity() {
                 Log.e("Scan*******", "Cancelled scan")
             } else {
                 Log.e("Scan", "Scanned")
-                scenario.GetAns(result.contents)
-                Toast.makeText(this, "Scanned: " + result.contents, Toast.LENGTH_LONG).show()
+                if(!scenario.GetAns(result.contents))
+                    Toast.makeText(this, "Scanned: " + result.contents, Toast.LENGTH_LONG).show()
             }
         } else { // This is important, otherwise the result will not be passed to the fragment
             super.onActivityResult(requestCode, resultCode, data)

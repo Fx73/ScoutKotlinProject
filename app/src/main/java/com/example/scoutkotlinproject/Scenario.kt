@@ -24,12 +24,13 @@ open class Scenario(protected val context: Context,protected val layout:Relative
         return true
     }
 
-    fun CheckProg(p:Int):Boolean
+    fun CheckProg(vararg p:Int):Boolean
     {
-        if(p==prog)
-            return true
+        for(e in p)
+            if(e==prog)
+                return true
 
-        ShowToast("Vous etes peut-être perdu ! Ceci est l'etape $p, vous devez trouver l'etape "+(prog).toString())
+        ShowToast("Vous etes peut-être perdu ! Ceci est l'etape "+p[0].toString()+", vous devez trouver l'etape "+prog.toString())
         return false
     }
 
@@ -98,7 +99,7 @@ open class Scenario(protected val context: Context,protected val layout:Relative
         layout.addView(b_dynamic)
     }
 
-    fun InstanceImageAt(name:String,pos:Int = 0)
+    fun InstanceImageAt(name:String,pos:Int = 0,size:Int=600)
     {
         val img_dynamic = ImageView(context)
         img_dynamic.setBackgroundResource(context.getResources().getIdentifier(name, "drawable", context.getPackageName()))
@@ -106,7 +107,7 @@ open class Scenario(protected val context: Context,protected val layout:Relative
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
-        r.height = 600
+        r.height = size
         r.setMargins(2,pos,2,0)
         img_dynamic.layoutParams = r
         layout.addView(img_dynamic)
