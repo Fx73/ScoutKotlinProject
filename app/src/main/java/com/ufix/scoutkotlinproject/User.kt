@@ -1,4 +1,5 @@
-package com.example.scoutkotlinproject
+package com.ufix.scoutkotlinproject
+
 import android.content.Context
 import android.content.SharedPreferences
 

@@ -1,4 +1,4 @@
-package com.example.scoutkotlinproject.Scenarios
+package com.ufix.scoutkotlinproject.Scenarios
 
 import android.Manifest
 import android.content.Context
@@ -8,8 +8,8 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.RelativeLayout
 import androidx.core.content.ContextCompat
-import com.example.scoutkotlinproject.R
-import com.example.scoutkotlinproject.Scenario
+import com.ufix.scoutkotlinproject.R
+import com.ufix.scoutkotlinproject.Scenario
 import java.lang.StringBuilder
 import kotlin.random.Random
 
