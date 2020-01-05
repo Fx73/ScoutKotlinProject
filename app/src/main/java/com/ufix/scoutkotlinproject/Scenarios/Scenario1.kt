@@ -768,7 +768,7 @@ class Scenario1 (c: Context,l:RelativeLayout) : Scenario(c,l) {
         choix=0
         jeu=0
         found=false
-        for (e in 0..filmsbool.size)
+        for (e in 0..filmsbool.size-1)
             filmsbool[e]=false
     }
 }
