@@ -7,6 +7,8 @@ import android.content.pm.PackageManager
 import android.hardware.Sensor
 import android.hardware.SensorManager
 import android.media.MediaRecorder
+import android.widget.Button
+import android.widget.EditText
 import android.widget.RelativeLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
@@ -22,8 +24,11 @@ class Scenario1 (c: Context,l:RelativeLayout) : Scenario(c,l) {
     var found : Boolean = false
     var jeu: Int = 0 //000
 
-    val animals = mutableListOf<String>("MOUTON","COCHON","CHIEN","HIPPOPOTAME","CHEVRE","CHIEN","ZEBRE","HAMSTER","VACHE","POULE")
-    var mRecorder :MediaRecorder = MediaRecorder()
+    val animals = mutableListOf("MOUTON","COCHON","CHIEN","HIPPOPOTAME","CHEVRE","CHIEN","ZEBRE","HAMSTER","VACHE","POULE")
+    val films = mutableListOf("L'AGE DE GLACE","BATMAN","SHREK", "RETOUR VERS LE FUTUR","ALADDIN","PRINCESSE MONONOKE","MATRIX","LES VISITEURS","LE DINER DE CONS","LE CERCLE DES POETES DISPARUS","OSS 117","LE MAGICIEN D'OZ","RAIPONCE","LA REINE DES NEIGES","ALICE AU PAYS DES MERVEILLES","TOY STORY","PETER PAN","POCAHONTAS","LE ROI LION","PIRATES DES CARAIBES")
+    var filmsbool = mutableListOf(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false)
+    val repliques = mutableListOf("T'es mal placé dans la chaîne alimentaire pour faire ta grande gueule !","Qui que je sois au fond de moi, je ne suis jugé que par mes actes","Les ogres, c'est comme les oignons !\n Snif ! Ils shlinguent ?","Je vous vois mal rentrer dans une droguerie et... et demander du plutonium.","Tu as confiance en moi ?","Princesse ! Retourne dans ta forêt ! Ne meurs pas en vain ! La retraite est aussi une preuve de courage !","La cuillère n’existe pas !","Okay !","Il a une belle tête de vainqueur!","Carpe Diem. Profitez du jour présent. Que vos vies soient extraordinaires","J’aime me beurrer la biscotte","J’ai l’impression que nous ne sommes plus au Kansas.","Va ! Accomplis ton rêve !\n D'accord !\n Pas toi ! Ton rêve est nul !","Qu'il est choux ! On dirait un tout petit bébé licorne","Qu’on leur coupe la tête!","Vers l'infini et au dela","Tu vois ce moment entre le sommeil et le rêve, où on se souvient d'avoir rêvé ? C'est la que je t'aimerai toujours et que je t'attendrai !","Un jour tu verras, ton coeur chantera, et tu comprendra","L'amour brille sous les étoiles","je n'ai de sympathie pour aucun de vous, bande d'asticots, ni même la patience de prétendre le contraire !")
+    val mRecorder :MediaRecorder = MediaRecorder()
 
     override fun RestoreSave(s: String,verif:Int, lVerif:Int):Boolean {
         if(super.RestoreSave(s,1,9)){
@@ -94,8 +99,8 @@ class Scenario1 (c: Context,l:RelativeLayout) : Scenario(c,l) {
             7->if(found)Etape7()else Etape6v2v("")
             8->if(found){if(jeu!=2)Etape8()else Etape8v1()}else Etape7r()
             9->if(found)Etape9()else Etape8r()
-            10->if(found)Etape10()else Etape9()
-            11->if(found)Etape11()else Etape10()
+            10->if(found)Etape10()else Etape9r()
+            11->if(found)Etape11()else Etape10r()
             99->Etape6v0()
             98->Etape6v1()
             97->Etape7v0()
@@ -106,48 +111,48 @@ class Scenario1 (c: Context,l:RelativeLayout) : Scenario(c,l) {
 
 
     override fun GetAns(S: String):Boolean {
-        when (S) {
-            "Prog","prog"->ShowToast("$prog")
-            "Choix","choix"->ShowToast("$choix")
-            "Found","found"->ShowToast("$found")
-            "SendSave"->ShowToast(SendSave())
-            "Reset","reset"->{Reset();Beggin()}
-            "Force 1","Force 2","Force 3","Force 4","Force 5","Force 6","Force 7","Force 8","Force 9","Force 10","Force 11"->prog=S.substring(6).toInt()
-            "E0 Camouflage" -> skill = 1
-            "E0 6e sens" -> skill = 2
-            "E0 Telekinesie" -> skill = 3
-            "Etape 1 : Quelle direction ?" -> Etape1()
-            "E1 Vallee" -> if(choix!=0){choix = 1;InstanceImageAt("s1valley",660)}
-            "E1 Montagne" -> if(choix!=0){choix = 2;InstanceImageAt("s1mountain",660)}
-            "Etape 2 : Avancer !" -> Etape2()
-            "E2 De l'eau !" -> Etape2v0()
-            "E2 Loup 1" -> Etape2v1(1)
-            "E2 Loup 2" -> Etape2v1(10)
-            "E2 Loup 3" -> Etape2v1(100)
-            "Etape 3 : Chateau en vue" -> Etape3()
-            "Etape 4 : Entree du chateau" -> Etape4()
-            "E5 Porte" -> Etape4v(0)
-            "E5 Escalier" -> Etape4v(1)
-            "E5 Telekinesie" -> Etape4v(2)
-            "Etape 5 : Exploration" ->Etape5()
-            "Etape 6 : Cachots" -> Etape6()
-            "E6 Porte 0"->Etape6v0()
-            "E6 Porte 1"->Etape6v1()
-            "E6 Porte 2"->Etape6v2()
-            "E6 Porte 3"->Etape6v3()
-            "Etape 7 : Donjon bas"->Etape7()
-            "E7 Combat"->Etape7v0()
-            "E7 Fuite"->Etape7v1()
-            "E7 Camouflage"->Etape7v2()
-            "E7 Passage"->Etape7v3()
-            "Etape 8 : Donjon milieu"->Etape8()
-            "E8 Gauche"->Etape8v0()
-            "E8 Droite"->Etape8v1()
-            "E8 6e sens"->Etape8v2()
-            "Etape 9 : Donjon haut"->Etape9()
-            "Etape 10 : Boss"->Etape10()
-            "Etape 11 : Fin"->Etape11()
-
+        if(S.length>=7 && S.toNormalCase().substring(0,7) == "FORCER") {
+            prog = S.substring(7).toInt()
+            return true
+        }
+        when (S.toNormalCase()) {
+            "DEBUG"->ShowToast("Progression $prog \nChoix $choix \nSkill $skill \nFound $found \nJeu $jeu")
+            "COCHON"-> ShowToast("Tu es une incroyable personne :-)")
+            "RESET"->{Reset();Beggin()}
+            "E0 CAMOUFLAGE" -> skill = 1
+            "E0 6E SENS" -> skill = 2
+            "E0 TELEKINESIE" -> skill = 3
+            "ETAPE 1 : QUELLE DIRECTION ?" -> Etape1()
+            "E1 VALLEE" -> if(choix!=0){choix = 1;InstanceImageAt("s1valley",660)}
+            "E1 MONTAGNE" -> if(choix!=0){choix = 2;InstanceImageAt("s1mountain",660)}
+            "ETAPE 2 : AVANCER !" -> Etape2()
+            "E2 DE L'EAU !" -> Etape2v0()
+            "E2 LOUP 1" -> Etape2v1(1)
+            "E2 LOUP 2" -> Etape2v1(10)
+            "E2 LOUP 3" -> Etape2v1(100)
+            "ETAPE 3 : CHATEAU EN VUE" -> Etape3()
+            "ETAPE 4 : ENTREE DU CHATEAU" -> Etape4()
+            "E5 PORTE" -> Etape4v(0)
+            "E5 ESCALIER" -> Etape4v(1)
+            "E5 TELEKINESIE" -> Etape4v(2)
+            "ETAPE 5 : EXPLORATION" ->Etape5()
+            "ETAPE 6 : CACHOTS" -> Etape6()
+            "E6 PORTE 0"->Etape6v0()
+            "E6 PORTE 1"->Etape6v1()
+            "E6 PORTE 2"->Etape6v2()
+            "E6 PORTE 3"->Etape6v3()
+            "ETAPE 7 : DONJON bas"->Etape7()
+            "E7 COMBAT"->Etape7v0()
+            "E7 FUITE"->Etape7v1()
+            "E7 CAMOUFLAGE"->Etape7v2()
+            "E7 PASSAGE"->Etape7v3()
+            "ETAPE 8 : DONJON milieu"->Etape8()
+            "E8 GAUCHE"->Etape8v0()
+            "E8 DROITE"->Etape8v1()
+            "E8 6E SENS"->Etape8v2()
+            "ETAPE 9 : DONJON haut"->Etape9()
+            "ETAPE 10 : BOSS"->Etape10()
+            "ETAPE 11 : FIN"->Etape11()
             else -> return false
         }
         return true
@@ -293,7 +298,7 @@ class Scenario1 (c: Context,l:RelativeLayout) : Scenario(c,l) {
 
     fun Etape5v(s:String)
     {
-        if(s=="Pyromancio" || s== "pyromancio")
+        if(s.toNormalCase()=="PYROMANCIO")
         {
             ClearLayout()
             InstanceImageAt("s1tower")
@@ -337,32 +342,33 @@ class Scenario1 (c: Context,l:RelativeLayout) : Scenario(c,l) {
         InstanceButtonAt("Action",1160,this::Etape6v0v,InstanceReaderAt("",1040).text)
     }
 
-    fun Etape6v0v(s:String)
+    fun Etape6v0v(sOld:String)
     {
+        val s=sOld.toNormalCase()
         var ok = false
-        if(s.contains("épée",true)) {
+        if(s.contains("EPEE",true)) {
             InstanceTextAt("Vous lui mettez un coup d'épée : -3 pv",1300+choix*200);jeu-=3;choix++;ok = true }
-        if(s.contains("poing",true)) {
+        if(s.contains("POING",true)) {
             InstanceTextAt("Vous lui mettez un coup de poing : -1 pv",1300+choix*200);jeu-=1;choix++;ok = true }
-        if(s.contains("bisou",true)) {
+        if(s.contains("BISOU",true)) {
             InstanceTextAt("Vous lui faites un bisou. C'est violent : -6 pv",1300+choix*200);jeu-=6;choix++;ok = true }
-        if(s.contains("calin",true)) {
+        if(s.contains("CALIN",true)) {
             InstanceTextAt("Vous lui faites un gros calin. Il est tout content : - 8pv",1300+choix*200);jeu-=8;choix++;ok = true }
-        if(s.contains("couteau",true)) {
+        if(s.contains("COUTEAU",true)) {
             InstanceTextAt("Vous sortez un couteau. Il rit très fort : - 0pv",1300+choix*200);jeu-=0;choix++;ok = true }
-        if(s.contains("sort",true)) {
+        if(s.contains("SORT",true)) {
             InstanceTextAt("Vous essayez de jeter un sort. Ca ne marche pas, mais il se plie en 2 de rire : - 1pv",1300+choix*200);jeu-=1;choix++;ok = true }
-        if(s.contains("hache",true)) {
+        if(s.contains("HACHE",true)) {
             InstanceTextAt("Vous tentez un coup de hache, mais elle rebondit sur sa peau : - 1pv",1300+choix*200);jeu-=1;choix++;ok = true }
-        if(s.contains("pied",true)) {
+        if(s.contains("PIED",true)) {
             InstanceTextAt("Vous lui faites un croche-patte. Il s'étale de toute sa masse : - 3pv",1300+choix*200);jeu-=3;choix++;ok = true }
-        if(s.contains("livre",true)) {
+        if(s.contains("LIVRE",true)) {
             InstanceTextAt("Vous ouvrez un livre et lui racontez une histoire. Il s'endort comme un bébé : - 5pv",1300+choix*200);jeu-=5;choix++;ok = true }
-        if(s.contains("courir",true)|| s.contains("fuir",true)) {
+        if(s.contains("COURIR",true)|| s.contains("fuir",true)) {
             InstanceTextAt("Vous tentez de fuir, mais il vous suit : - 0pv",1300+choix*200);jeu-=0;choix++;ok = true }
-        if(s.contains("peur",true)) {
+        if(s.contains("PEUR",true)) {
             InstanceTextAt("Vous lui racontez une histoire qui fait peur. Il a un peu peur : - 1pv",1300+choix*200);jeu-=1;choix++;ok = true }
-        if(s.contains("cochon",true)) {
+        if(s.contains("COCHON",true)) {
             InstanceTextAt("Vous sortez un cochon, le faites griller à la broche et lui proposez un morceau. Il est ravi, c'est délicieux : - 10pv",1300+choix*200);jeu-=10;choix++;ok = true }
 
         if (!ok)
@@ -370,8 +376,9 @@ class Scenario1 (c: Context,l:RelativeLayout) : Scenario(c,l) {
         else
             if(jeu<0)
             {
-
-                InstanceTextAt("Le monstre ne vous ennuira plus. Il n'y a rien d'autre ici. Vous ressortez et choisissez une autre porte",1400+choix*200)
+                DeleteAllOfTypeInLayout<android.widget.Button>()
+                DeleteAllOfTypeInLayout<android.widget.EditText>()
+                InstanceTextAt("Le monstre ne vous ennuira plus. Il n'y a rien d'autre ici. Vous ressortez et choisissez une autre porte",1480+choix*200)
                 jeu=0
                 prog=6
             }
@@ -423,7 +430,7 @@ class Scenario1 (c: Context,l:RelativeLayout) : Scenario(c,l) {
     }
     fun Etape6v1v2(s:String)
     {
-        if (s.toUpperCase()==animals[jeu])
+        if (s.toNormalCase()==animals[jeu])
         {
             ClearLayout()
             InstanceTextAt("La machine ecrit : BRAVO.")
@@ -485,7 +492,7 @@ class Scenario1 (c: Context,l:RelativeLayout) : Scenario(c,l) {
 
     }
     fun Etape7v0v(s:String){
-        if(s=="lose momentum" || s == "Lose momentum")
+        if(s.toNormalCase() =="LOSE MOMENTUM")
         {
             ClearLayout()
             InstanceTextAt("Vous avez immobilisé les trois monstres")
@@ -607,7 +614,7 @@ class Scenario1 (c: Context,l:RelativeLayout) : Scenario(c,l) {
         jeu = 2
     }
     fun Etape8v1v(s:String){
-        if(s=="coq"||s=="coq")
+        if(s.toNormalCase()=="COQ")
         {
             ClearLayout()
             InstanceTextAt("Bravo, la porte s'ouvre. Vous pouvez la franchir")
@@ -628,6 +635,7 @@ class Scenario1 (c: Context,l:RelativeLayout) : Scenario(c,l) {
             InstanceTextAt("Votre 6e sens vous prévient qu'il s'agit d'une grosse escouade d'hommes en armes, mais également que vous les connaissez. Vous montez les escaliers à leur rencontre. Il s'agit des renforts que vous avez appelés avec le feu sur la tour. Vous continuez votre route avec un groupe largement plus nombreux.")
         InstanceImageAt("s1renfort",500)
         prog = 9
+        found = false
     }
     fun Etape8r(){
         ClearLayout()
@@ -642,37 +650,107 @@ class Scenario1 (c: Context,l:RelativeLayout) : Scenario(c,l) {
         if(choix==1){
             InstanceTextAt("Le vieil homme s'avance et vous dit 'Comme promis, je vais vous montrer ou se trouve le trésor'.\n Il s'approche d'un mur, et appuie dessus. Le mur coulisse. ")
             InstanceImageAt("s1treasure",480)
-            InstanceTextAt("Puis il vous montre une porte immense : 'C'est la que se trouve le sorcier'.Il reste en arrière tandis que vous vous approchez de la porte ...",1100)
-            InstanceImageAt("s1bossgate",1400)
+            InstanceTextAt("Puis il vous montre une porte immense : 'Le sorcier se trouve derrière'",1100)
         }
         else
         {
-            InstanceTextAt("Vous arrivez tout en haut du donjon. Vous faisant face se trouve une porte immense .",1100)
-            InstanceImageAt("s1bossgate",320)
-            InstanceTextAt("Vous vous approchez de la porte ...",930)
+            InstanceTextAt("Vous arrivez tout en haut du donjon. Il s'agit d'une immense salle, dont les murs sont recouvers de tapisseries. Vous sondez ces dernières dans l'espoir de trouver une salle secrète, en vain. Vous faisant face se trouve une porte immense . ")
         }
+        InstanceImageAt("s1bossgate",1300)
+        InstanceTextAt("La porte est fermée. Il y a cinq vers écrits sur le fronton : \n\n Sans voix , il hurle,\nSans ailes , il voltige,\nSans dents , il mord\nSans bouche , il murmure,\n Sans main, il caresse.",1900)
+        InstanceButtonAt("Dire",2600,this::Etape9v,InstanceReaderAt("",2480).text)
+
         prog=10
         found = false
     }
+    fun Etape9v(s:String)
+    {
+        if(s.toNormalCase()=="VENT" || s.toNormalCase() == "LE VENT") {
+            DeleteAllOfTypeInLayout<Button>()
+            DeleteAllOfTypeInLayout<EditText>()
+            InstanceTextAt("La porte s'ouvre lentement. Vous vous en approchez, doucement ...",2500 )
+        }
+    }
+    fun Etape9r(){
+        ClearLayout()
+        InstanceImageAt("s1bossgate")
+        InstanceTextAt("Après être arrivé toute en haut de la tour,vous arrivez en face d'une porte immense. Celle ci s'ouvre lentement. Vous vous en approchez, doucement ...",600)
+    }
+
 
     fun Etape10()
     {
         if (!CheckProg(10)) return
         found = true
+        jeu = 0
         ClearLayout()
-        InstanceImageAt("s1boss0")
-        if(skill==4||skill==5||skill==6)
-        {
-
-        }
+        InstanceTextAt("Vous entrez dans une grande salle. Le sorcier est la, en train d'ouvrir un portail vers une autre dimension. Il se retourne et ricane : 'Haha ! Vous avez du avoir du mal à arriver jusqu'ici, mais c'est en vain ! Vous allez périr ici'")
+        InstanceImageAt("s1boss0",580)
+        if(skill==4||skill==5||skill==6 || skill == 0)
+            InstanceTextAt("Il est très puissant. Il s'attaquera à vous en lancant des répliques de films. Si vous répondez avec le titre du film, il sera déstabilisé et vous pourrez lui mettre un coup. Il est très fort, mais avec les renforts vous êtes nombreux, il ne vous faudras que 8 coups pour le vaincre. Si vous ne savez vraiment pas, vous pouvez utiliser votre pouvoir pour vous protéger. ",1200)
         else
-        {
-
-        }
+            InstanceTextAt("Il est très puissant. Il s'attaquera à vous en lancant des répliques de films. Si vous répondez avec le titre du film, il sera déstabilisé et vous pourrez lui mettre un coup. Il est très fort, il faudra lui mettre 16 coups pour le vaincre. Si vous ne savez vraiment pas, vous pouvez utiliser votre pouvoir pour vous protéger. ",1200)
+        InstanceButtonAt("Commencer le combat !",1900,this::Etape10v1)
+        //ShowToast(films.size.toString()+ " : " + filmsbool.size.toString() +" : "+ repliques.size.toString())
 
     }
 
-    fun Etape11(){
+    fun Etape10v0(s:String){
+        if(s.toNormalCase() != films[jeu])return
+        filmsbool[jeu] = true
+        jeu++
+        if ((filmsbool.sum() == 8 && (skill==4||skill==5||skill==6 || skill == 0)) || filmsbool.sum() == 16 )
+            Etape10r()
+        else
+            Etape10v1("")
+    }
+
+    fun Etape10v1(s:String) {
+        ClearLayout()
+        InstanceTextAt("Vous entrez dans une grande salle. Le sorcier est la, en train d'ouvrir un portail vers une autre dimension. Il se retourne et ricane : 'Haha ! Vous avez du avoir du mal à arriver jusqu'ici, mais c'est en vain ! Vous allez périr ici'")
+        InstanceImageAt("s1boss0",560)
+        var compt=0
+        for(i in 0..films.size-1)
+            if(filmsbool[i]){
+                InstanceTextAt(films[i],1840+compt*100)
+                compt++
+            }
+
+        ChooseNextFilm()
+        InstanceTextAt(repliques[jeu],1180)
+        InstanceButtonAt("Répondre",1580,this::Etape10v0,InstanceReaderAt("",1460).text)
+        when(skill){
+            1,4->InstanceButtonAt("Se camoufler",1700,this::Etape10v1)
+            2,5->InstanceButtonAt("Anticiper",1700,this::Etape10v1)
+            3,6->InstanceButtonAt("Télékinésiter",1700,this::Etape10v1)
+        }
+    }
+
+    fun Etape10r(){
+        ClearLayout()
+        InstanceTextAt("Vous entrez dans une grande salle. Le sorcier est la, en train d'ouvrir un portail vers une autre dimension. Il se retourne et ricane : 'Haha ! Vous avez du avoir du mal à arriver jusqu'ici, mais c'est en vain ! Vous allez périr ici'")
+        InstanceImageAt("s1boss0",580)
+        InstanceTextAt("Vous avez livré un intense combat, mais ca y est, vous avez gagné. Le sorcier est tombé. Triomphant, vous lancez un dernier sort vers le portail, qui explose dans un bruit assourdissant. Il ne vous reste plus qu'à revenir à l'entrée du chateau pour clore cette aventure.",1200)
+        prog =11
+        found = false
+    }
+
+    private fun ChooseNextFilm(){
+        var i= 0
+        jeu = Random.nextInt(0, films.size)
+        while(jeu != 0)
+        {
+            i++
+            if(i>=filmsbool.size)
+                i=0
+            if(!filmsbool[i])
+                jeu --
+        }
+        jeu = i
+    }
+
+
+        fun Etape11(){
         if (!CheckProg(11)) return
         found = true
         ClearLayout()

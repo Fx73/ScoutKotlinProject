@@ -116,6 +116,12 @@ open class Scenario(protected val context: Context,protected val layout:Relative
         img_dynamic.bringToFront()
     }
 
+    inline fun <reified T> DeleteAllOfTypeInLayout() {
+        for (child in layout.children) {
+            if (child is T)
+                layout.removeView(child)
+        }
+    }
     fun DeleteInLayout(){
         for(child in layout.children){
             if(child is Button)
@@ -128,8 +134,33 @@ open class Scenario(protected val context: Context,protected val layout:Relative
         return android.R.drawable.ic_menu_help
     }
 
+    fun String.toNormalCase() = this
+        .trim()
+        .toUpperCase()
+        .replace('é','E',true)
+        .replace('è','E',true)
+        .replace('ê','E',true)
+        .replace('ë','E',true)
+        .replace('û','U',true)
+        .replace('ù','U',true)
+        .replace('â','A',true)
+        .replace('à','A',true)
+        .replace('ô','O',true)
+        .replace('î','I',true)
+        .replace('ï','I',true)
+        .replace('ç','I',true)
+
+
+
     fun Boolean.toInt() = if (this) 1 else 0
     fun Int.toBoolean() = (this == 1)
+    fun List<Boolean>.sum():Int {
+        var sum = 0
+        for(e in this)
+            if(e)
+                sum++
+        return sum
+    }
 
     fun ShowToast(s: String)= Toast.makeText(context,s, Toast.LENGTH_LONG ).show()
 
