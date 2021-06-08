@@ -21,4 +21,4 @@ Une fois le mini-jeu résolu, la carte se met à jour, et les joueurs peuvent av
 Ce programme avait pour objectif d'animer un groupe de jeunes durant un après-midi, et également de découvir le développement sous Android et le Kotlin.
 
 Il est disponnible sur le Play Store ici:
-https://play.google.com/store/apps/details?id=com.ufix.scoutkotlinproject&hl=fr
+https://play.google.com/store/apps/details?id=com.ufix.jeudepistekt&hl=fr

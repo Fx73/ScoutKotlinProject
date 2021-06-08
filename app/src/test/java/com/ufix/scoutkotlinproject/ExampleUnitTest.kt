@@ -1,4 +1,4 @@
-package com.ufix.scoutkotlinproject
+package com.ufix.jeudepistekt
 
 import org.junit.Test
 

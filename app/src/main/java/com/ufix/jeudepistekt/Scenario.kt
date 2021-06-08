@@ -1,4 +1,4 @@
-package com.ufix.scoutkotlinproject
+package com.ufix.jeudepistekt
 
 import android.content.Context
 import android.text.Editable

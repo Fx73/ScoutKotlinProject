@@ -1,4 +1,4 @@
-package com.ufix.scoutkotlinproject
+package com.ufix.jeudepistekt
 
 import android.Manifest
 import android.content.Intent
@@ -14,7 +14,7 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.ufix.scoutkotlinproject.Scenarios.Scenario1
+import com.ufix.jeudepistekt.Scenarios.Scenario1
 import com.google.zxing.integration.android.IntentIntegrator
 import kotlinx.android.synthetic.main.activity_main.*
 
